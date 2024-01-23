@@ -1,0 +1,37 @@
+﻿@page "/counter"
+<!-- Describe an URL path for the page -->
+@page "/dothestuff"
+<!-- page can have multiple working URLs -->
+@page "/counter/{startingValue:int}"
+<!-- params here are case-insensitive and throw type exceptions if not given a type -->
+@layout MainLayout
+<!-- changing page's layout -->
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<!-- Write a C# function to the on-click button action -->
+@code {
+    private int currentCount = 0;
+    <!-- non-parameter (even public) can't be accessed like parameters are -->
+    [Parameter]
+    public int StartingValue { get; set; } = 0;
+    <!-- This parameter can be set by value given in the URL -->
+    [Parameter]
+    public int IncrementBy { get; set; } = 1;
+    <!-- Parameters can be set independently on diffent pages that uses Counter component -->
+   
+    protected override void OnParametersSet()
+    {
+        currentCount = StartingValue;
+        base.OnParametersSet();
+    }
+    private void IncrementCount()
+    {
+        currentCount += IncrementBy;
+    }
+}

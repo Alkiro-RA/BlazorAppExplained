@@ -1,0 +1,60 @@
+﻿<!-- So this is just to show off how getting a data from API can look like. -->
+<!-- This is Blazor Server (server-side) app, so it doesn't make much sense, -->
+<!-- but the tutorial guy is doing it here, so prolly it should be done the same way -->
+<!-- for the Blazor WebAssembly (client-side) project -->
+@page "/fetchdata"
+<PageTitle>Weather forecast</PageTitle>
+
+@using BlazorServerApp.Data
+@inject WeatherForecastService ForecastService
+<!-- dependency injection example -->
+@inject HttpClient Http
+<!-- service needed to consume API -->
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<WeatherForecast>? forecasts;
+
+    <!-- A way to load data before the page renders? -->
+    protected override async Task OnInitializedAsync()
+    {
+        <!-- using injected WFService boilerplate example -->
+        //forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+
+        <!--  -->
+        forecasts = await Http.GetFromJsonAsync<IEnumerable<WeatherForecast>>("https://localhost:5001/api/forecast");
+
+    }
+}

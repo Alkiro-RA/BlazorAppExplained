@@ -1,0 +1,45 @@
+﻿@page "/todo"
+@using BlazorServerApp.Data
+<!-- giving page the access to other files -->
+
+<h3>Todo</h3>
+
+<!-- mix-in C# code with HTML just like that  -->
+<ul>
+    @foreach (var item in Todos)
+    {
+        <li>@item.Todo @item.GetDate()</li>
+    }
+</ul>
+
+<input @bind="newTodo" @bind:event="oninput" placeholder="What do you need to do?" />
+<!-- this one updates the page whenever field gets new input -->
+<input @bind="newDate" @bind:format="yyyy-MM-dd" placeholder="Untill..?" />
+<!-- bind:format accepts only the chosen format -->
+<button @onclick="Save">Save</button>
+<!-- onclick event gets the Save() method fired -->
+
+@if (!string.IsNullOrEmpty(newTodo))
+{
+    <p>@newTodo's due date: @newDate?.ToShortDateString()</p>
+}
+
+@code {
+    <!-- code{} allows to write C# code blocks -->
+    private List<TodoItem> Todos = new();
+    private string newTodo = string.Empty;
+    private DateTime? newDate = null;
+
+    private void Save()
+    {
+        if (string.IsNullOrEmpty(newTodo)) return;
+        TodoItem tempTodo = new()
+            {
+                Todo = newTodo,
+                Date = newDate
+            };
+        Todos.Add(tempTodo);
+        newTodo = string.Empty;
+        newDate = null;
+    }
+}
